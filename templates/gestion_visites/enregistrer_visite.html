@@ -1,0 +1,224 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Enregistrer une visite</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Gestion Visiteurs</h2>
+                <p>Agent d'accueil</p>
+            </div>
+
+            <ul class="sidebar-menu">
+
+                <li>
+                    <a href="{% url 'dashboard_agent' %}">
+                        Tableau de bord
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'enregistrer_visite' %}"  class="active">
+                        Enregistrer une visite
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'liste_visiteurs' %}">
+                        Visiteurs
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'visites_en_cours' %}">
+                        Visites en cours
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'historique_visites' %}">
+                        Historique
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'deconnexion' %}">
+                        Déconnexion
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <h1>Enregistrer une visite</h1>
+
+                <div class="user-info">
+                    👤 {{ request.user.username }}
+                </div>
+
+            </div>
+
+
+            <!-- FORMULAIRE -->
+            <section class="visits-section">
+
+                <h2>Informations du visiteur</h2>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="nom">Nom</label>
+                        <input
+                            type="text"
+                            id="nom"
+                            name="nom"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prenom">Prénom</label>
+                        <input
+                            type="text"
+                            id="prenom"
+                            name="prenom"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telephone">Téléphone</label>
+                        <input
+                            type="tel"
+                            id="telephone"
+                            name="telephone"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="type_piece">Type de pièce</label>
+
+                        <select
+                            id="type_piece"
+                            name="type_piece"
+                            required
+                        >
+                            <option value="">Sélectionner</option>
+                            <option value="CNI">CNI</option>
+                            <option value="Passeport">Passeport</option>
+                            <option value="Permis de conduire">
+                                Permis de conduire
+                            </option>
+                            <option value="Carte consulaire">
+                                Carte consulaire
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="numero_piece">
+                            Numéro de pièce
+                        </label>
+
+                        <input
+                            type="text"
+                            id="numero_piece"
+                            name="numero_piece"
+                            required
+                        >
+                    </div>
+
+
+                    <hr>
+
+
+                    <h2>Informations de la visite</h2>
+
+                    <div class="form-group">
+                        <label for="service">
+                            Service concerné
+                        </label>
+
+                        <select
+    id="service"
+    name="service"
+    required
+>
+    <option value="">
+        Sélectionner un service
+    </option>
+
+    {% for service in services %}
+        <option value="{{ service.id }}">
+            {{ service.nom }}
+        </option>
+    {% endfor %}
+
+</select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="motif">Motif de la visite</label>
+
+                        <textarea
+                            id="motif"
+                            name="motif"
+                            rows="4"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observation">
+                            Observation
+                        </label>
+
+                        <textarea
+                            id="observation"
+                            name="observation"
+                            rows="3"
+                        ></textarea>
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Enregistrer la visite
+                    </button>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

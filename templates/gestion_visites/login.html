@@ -1,0 +1,71 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Connexion - Gestion des visiteurs</title>
+
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-card">
+
+            <div class="login-header">
+                <h1>Gestion des visiteurs</h1>
+                <p>Connectez-vous à votre espace</p>
+            </div>
+
+            {% if erreur %}
+                <div class="error-message">
+                    {{ erreur }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="username">Nom d'utilisateur</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Entrez votre nom d'utilisateur"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Entrez votre mot de passe"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-button">
+                    Se connecter
+                </button>
+
+            </form>
+
+            <div class="login-footer">
+                Système de gestion des visiteurs
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

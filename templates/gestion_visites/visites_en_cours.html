@@ -1,0 +1,165 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Visites en cours</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Gestion Visiteurs</h2>
+                <p>Agent d'accueil</p>
+            </div>
+
+            <ul class="sidebar-menu">
+
+                <li>
+                    <a href="{% url 'dashboard_agent' %}">
+                        Tableau de bord
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'enregistrer_visite' %}">
+                        Enregistrer une visite
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'liste_visiteurs' %}">
+                        Visiteurs
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'visites_en_cours' %}"  class="active">
+                        Visites en cours
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'historique_visites' %}">
+                        Historique
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'deconnexion' %}">
+                        Déconnexion
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <h1>Visites en cours</h1>
+
+                <div class="user-info">
+                    👤 {{ request.user.username }}
+                </div>
+
+            </div>
+
+
+            <section class="visits-section">
+
+                <h2>Visiteurs actuellement présents</h2>
+
+                {% if visites %}
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Visiteur</th>
+                                    <th>Téléphone</th>
+                                    <th>Service</th>
+                                    <th>Motif</th>
+                                    <th>Heure d'entrée</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for visite in visites %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ visite.visiteur.nom }}
+                                            {{ visite.visiteur.prenom }}
+                                        </td>
+
+                                        <td>
+                                            {{ visite.visiteur.telephone }}
+                                        </td>
+
+                                        <td>
+                                            {{ visite.service.nom }}
+                                        </td>
+
+                                        <td>
+                                            {{ visite.motif }}
+                                        </td>
+
+                                        <td>
+                                            {{ visite.date_heure_entree|date:"d/m/Y H:i" }}
+                                        </td>
+
+                                        <td>
+                                            <form method="post" action="{% url 'enregistrer_sortie' visite.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit">
+                                                    Enregistrer la sortie
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <p>
+                        Aucun visiteur n'est actuellement présent.
+                    </p>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

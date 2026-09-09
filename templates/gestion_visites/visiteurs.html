@@ -1,0 +1,154 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Visiteurs</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <h2>Gestion Visiteurs</h2>
+                <p>Agent d'accueil</p>
+            </div>
+
+            <ul class="sidebar-menu">
+
+                <li>
+                    <a href="{% url 'dashboard_agent' %}">
+                        Tableau de bord
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'enregistrer_visite' %}">
+                        Enregistrer une visite
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'liste_visiteurs' %}"  class="active">
+                        Visiteurs
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'visites_en_cours' %}">
+                        Visites en cours
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'historique_visites' %}">
+                        Historique
+                    </a>
+                </li>
+            
+                <li>
+                    <a href="{% url 'deconnexion' %}">
+                        Déconnexion
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content">
+
+            <div class="topbar">
+
+                <h1>Visiteurs</h1>
+
+                <div class="user-info">
+                    👤 {{ request.user.username }}
+                </div>
+
+            </div>
+
+
+            <section class="visits-section">
+
+                <h2>Liste des visiteurs</h2>
+
+                {% if visiteurs %}
+
+                    <div class="table-container">
+
+                        <table>
+
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Téléphone</th>
+                                    <th>Type de pièce</th>
+                                    <th>Numéro de pièce</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for visiteur in visiteurs %}
+
+                                    <tr>
+
+                                        <td>
+                                            {{ visiteur.nom }}
+                                        </td>
+
+                                        <td>
+                                            {{ visiteur.prenom }}
+                                        </td>
+
+                                        <td>
+                                            {{ visiteur.telephone }}
+                                        </td>
+
+                                        <td>
+                                            {{ visiteur.type_piece }}
+                                        </td>
+
+                                        <td>
+                                            {{ visiteur.numero_piece }}
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <p>
+                        Aucun visiteur enregistré.
+                    </p>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
