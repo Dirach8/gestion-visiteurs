@@ -105,13 +105,73 @@
                     </div>
                 </div>
 
+                <div class="stat-card">
+
+                    <h3>Total des visiteurs</h3>
+                
+                    <div class="number">
+                        {{ total_visiteurs }}
+                    </div>
+                
+                </div>
+
             </div>
+
+            <section class="visits-section">
+
+                <h2>Actions rapides</h2>
+            
+                <div class="quick-actions">
+            
+                    <a href="{% url 'enregistrer_visite' %}" class="quick-action">
+                        <span>➕</span>
+                        <div>
+                            <strong>Enregistrer une visite</strong>
+                            <small>Enregistrer l'entrée d'un visiteur</small>
+                        </div>
+                    </a>
+            
+                    <a href="{% url 'liste_visiteurs' %}" class="quick-action">
+                        <span>👥</span>
+                        <div>
+                            <strong>Voir les visiteurs</strong>
+                            <small>Consulter les visiteurs enregistrés</small>
+                        </div>
+                    </a>
+            
+                    <a href="{% url 'visites_en_cours' %}" class="quick-action">
+                        <span>🟢</span>
+                        <div>
+                            <strong>Visites en cours</strong>
+                            <small>Voir les visiteurs actuellement présents</small>
+                        </div>
+                    </a>
+            
+                    <a href="{% url 'historique_visites' %}" class="quick-action">
+                        <span>📋</span>
+                        <div>
+                            <strong>Historique</strong>
+                            <small>Consulter l'ensemble des visites</small>
+                        </div>
+                    </a>
+            
+                </div>
+            
+            </section>
 
 
             <!-- DERNIÈRES VISITES -->
             <section class="visits-section">
 
-                <h2>Dernières visites</h2>
+                <div class="section-header">
+
+                    <h2>Dernières visites</h2>
+                
+                    <a href="{% url 'historique_visites' %}" class="view-all">
+                        Voir tout l'historique →
+                    </a>
+                
+                </div>
 
                 {% if dernieres_visites %}
 
@@ -191,7 +251,23 @@
 
                 {% else %}
 
-                    <p>Aucune visite enregistrée.</p>
+                <div class="empty-state">
+
+                    <div class="empty-state-icon">
+                        📋
+                    </div>
+                
+                    <h3>Aucune visite enregistrée</h3>
+                
+                    <p>
+                        Les dernières visites enregistrées apparaîtront ici.
+                    </p>
+                
+                    <a href="{% url 'enregistrer_visite' %}">
+                        Enregistrer une visite
+                    </a>
+                
+                </div>
 
                 {% endif %}
 

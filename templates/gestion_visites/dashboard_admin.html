@@ -1,19 +1,374 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Dashboard - Administrateur</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/dashboard_agent.css' %}"
+    >
+
 </head>
+
 
 <body>
 
-    <h1>Bienvenue sur le dashboard administrateur</h1>
+    <div class="dashboard">
 
-    <p>Vous êtes connecté en tant qu'administrateur.</p>
 
-    <p>Nom d'utilisateur : {{ request.user.username }}</p>
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+        
+                <h2>Gestion visiteurs</h2>
+        
+                <span>Administration</span>
+        
+            </div>
+        
+            <ul class="sidebar-menu">
+        
+                <li>
+                    <a href="{% url 'dashboard_admin' %}" class="active">
+                        <span>Tableau de bord</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'enregistrer_visite' %}">
+                        <span>Enregistrer une visite</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'liste_visiteurs' %}">
+                        <span>Visiteurs</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'visites_en_cours' %}">
+                        <span>Visites en cours</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'historique_visites' %}">
+                        <span>Historique</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'gestion_services' %}">
+                        <span>Services</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'gestion_utilisateurs' %}">
+                        <span>Utilisateurs</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="/admin/">
+                        <span>Administration</span>
+                    </a>
+                </li>
+        
+                <li>
+                    <a href="{% url 'deconnexion' %}">
+                        <span>Déconnexion</span>
+                    </a>
+                </li>
+        
+            </ul>
+        
+        </aside>
+
+
+
+        <!-- =========================
+             CONTENU PRINCIPAL
+        ========================== -->
+
+        <main class="main-content">
+
+
+            <!-- TOPBAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>Tableau de bord</h1>
+
+                    <p>
+                        Vue d'ensemble du système
+                    </p>
+
+                </div>
+
+
+                <div class="user-info">
+
+                    <strong>
+                        {{ request.user.username }}
+                    </strong>
+
+                    <span>
+                        Administrateur
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- CONTENU -->
+
+            <section class="content">
+
+
+                <!-- =========================
+                     STATISTIQUES
+                ========================== -->
+
+                <div class="stats">
+
+
+                    <div class="stat-card">
+
+                        <h3>Total des visiteurs</h3>
+
+                        <div class="number">
+                            {{ total_visiteurs }}
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat-card">
+
+                        <h3>Total des visites</h3>
+
+                        <div class="number">
+                            {{ total_visites }}
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat-card">
+
+                        <h3>Visites en cours</h3>
+
+                        <div class="number">
+                            {{ visites_presentes }}
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="stat-card">
+
+                        <h3>Total des services</h3>
+
+                        <div class="number">
+                            {{ total_services }}
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- =========================
+                     BIENVENUE
+                ========================== -->
+
+                <section class="visits-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h2>
+                                Bienvenue,
+                                {{ request.user.username }}
+                            </h2>
+
+                            <p>
+                                Gérez les visiteurs et le fonctionnement
+                                du système depuis cet espace.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =========================
+                     ACTIONS ADMINISTRATION
+                ========================== -->
+
+                <section class="visits-section">
+
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h2>
+                                Actions d'administration
+                            </h2>
+
+                            <p>
+                                Gérez les différents éléments du système.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="quick-actions">
+
+
+                        <!-- SERVICES -->
+
+                        <a href="{% url 'gestion_services' %}" class="quick-action">
+
+                            <span>🏢</span>
+
+                            <div>
+
+                                <strong>
+                                    Gérer les services
+                                </strong>
+
+                                <small>
+                                    Ajouter, modifier ou désactiver
+                                    un service
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- UTILISATEURS -->
+
+                        <a href="{% url 'gestion_utilisateurs' %}" class="quick-action">
+
+                            <span>👤</span>
+
+                            <div>
+
+                                <strong>
+                                    Gérer les utilisateurs
+                                </strong>
+
+                                <small>
+                                    Gérer les comptes et les accès
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- HISTORIQUE -->
+
+                        <a
+                            href="{% url 'historique_visites' %}"
+                            class="quick-action"
+                        >
+
+                            <span>📊</span>
+
+                            <div>
+
+                                <strong>
+                                    Consulter l'historique
+                                </strong>
+
+                                <small>
+                                    Rechercher et filtrer les visites
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- ADMINISTRATION -->
+
+                        <a
+                            href="/admin/"
+                            class="quick-action"
+                        >
+
+                            <span>⚙️</span>
+
+                            <div>
+
+                                <strong>
+                                    Administration Django
+                                </strong>
+
+                                <small>
+                                    Accéder aux fonctions avancées
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                    </div>
+
+
+                </section>
+
+
+            </section>
+
+
+        </main>
+
+
+    </div>
+
 
 </body>
-</html>    
+
+</html>

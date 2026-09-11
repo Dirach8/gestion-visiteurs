@@ -1,0 +1,311 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestion des utilisateurs</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <h2>Gestion Visiteurs</h2>
+    
+            {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+                <p>Administration</p>
+            {% else %}
+                <p>Agent d'accueil</p>
+            {% endif %}
+        </div>
+    
+    
+        <ul class="sidebar-menu">
+    
+            <!-- Tableau de bord -->
+            <li>
+                {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+                    <a href="{% url 'dashboard_admin' %}">
+                        Tableau de bord
+                    </a>
+                {% else %}
+                    <a href="{% url 'dashboard_agent' %}">
+                        Tableau de bord
+                    </a>
+                {% endif %}
+            </li>
+    
+    
+            <!-- Enregistrer une visite -->
+            <li>
+                <a href="{% url 'enregistrer_visite' %}">
+                    Enregistrer une visite
+                </a>
+            </li>
+    
+    
+            <!-- Visiteurs -->
+            <li>
+                <a href="{% url 'liste_visiteurs' %}">
+                    Visiteurs
+                </a>
+            </li>
+    
+    
+            <!-- Visites en cours -->
+            <li>
+                <a href="{% url 'visites_en_cours' %}">
+                    Visites en cours
+                </a>
+            </li>
+    
+    
+            <!-- Historique -->
+            <li>
+                <a href="{% url 'historique_visites' %}">
+                    Historique
+                </a>
+            </li>
+    
+    
+            <!-- Fonctions administrateur -->
+            {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+    
+                <!-- Services -->
+                <li>
+                    <a href="{% url 'gestion_services' %}">
+                        Services
+                    </a>
+                </li>
+    
+    
+                <!-- Utilisateurs -->
+                <li>
+                    <a href="{% url 'gestion_utilisateurs' %}"  class="active">
+                        Utilisateurs
+                    </a>
+                </li>
+    
+    
+                <!-- Administration Django -->
+                <li>
+                    <a href="/admin/">
+                        Administration
+                    </a>
+                </li>
+    
+            {% endif %}
+    
+    
+            <!-- Déconnexion -->
+            <li>
+                <a href="{% url 'deconnexion' %}">
+                    Déconnexion
+                </a>
+            </li>
+    
+        </ul>
+    
+    </aside>
+
+
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+                <h1>Gestion des utilisateurs</h1>
+                <p>Gérez les comptes et les accès au système</p>
+            </div>
+
+            <div class="user-info">
+                <strong>{{ request.user.username }}</strong>
+                <span>Administrateur</span>
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+            <section class="visits-section">
+
+                <div class="section-header">
+
+                    <div>
+                        <h2>Utilisateurs du système</h2>
+
+                        <p>
+                            Consultez les comptes utilisateurs et leurs rôles.
+                        </p>
+                    </div>
+
+                    <a href="{% url 'ajouter_utilisateur' %}" class="primary-action">
+                        + Ajouter un utilisateur
+                    </a>
+
+                </div>
+
+
+                {% if utilisateurs %}
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>Nom d'utilisateur</th>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Rôle</th>
+                                <th>Statut</th>
+                                <th class="actions-column">Action</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for utilisateur in utilisateurs %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ utilisateur.username }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ utilisateur.last_name|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ utilisateur.first_name|default:"-" }}
+                                </td>
+
+                                <td>
+
+                                    {% if utilisateur.is_superuser %}
+
+                                        <span class="status present">
+                                            Administrateur
+
+                                        </span>
+
+                                    {% elif utilisateur.groups.all %}
+
+                                        {% for groupe in utilisateur.groups.all %}
+
+                                            {% if groupe.name == "ADMINISTRATEUR" %}
+
+                                                <span class="status present">
+                                                    Administrateur
+                                                </span>
+
+                                            {% elif groupe.name == "AGENT_ACCUEIL" %}
+
+                                                <span class="status present">
+                                                    Agent d'accueil
+                                                </span>
+
+                                            {% endif %}
+
+                                        {% endfor %}
+
+                                    {% else %}
+
+                                        <span class="status sorti">
+                                            Aucun rôle
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if utilisateur.is_active %}
+
+                                        <span class="status present">
+                                            Actif
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status sorti">
+                                            Inactif
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                    <td class="actions-column">
+
+                                        <a
+                                            href="{% url 'modifier_utilisateur' utilisateur.id %}"
+                                            class="table-action"
+                                        >
+                                            Modifier
+                                        </a>
+                                    
+                                        <a
+                                            href="{% url 'reinitialiser_mot_de_passe' utilisateur.id %}"
+                                            class="table-action"
+                                        >
+                                            Mot de passe
+                                        </a>
+                                    
+                                    </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-state-icon">
+                        👤
+                    </div>
+
+                    <h3>Aucun utilisateur</h3>
+
+                    <p>
+                        Aucun utilisateur n'est encore enregistré.
+                    </p>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

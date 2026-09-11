@@ -20,49 +20,101 @@
 
             <div class="sidebar-header">
                 <h2>Gestion Visiteurs</h2>
-                <p>Agent d'accueil</p>
+        
+                {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+                    <p>Administration</p>
+                {% else %}
+                    <p>Agent d'accueil</p>
+                {% endif %}
             </div>
-
+        
+        
             <ul class="sidebar-menu">
-
+        
+                <!-- Tableau de bord -->
                 <li>
-                    <a href="{% url 'dashboard_agent' %}">
-                        Tableau de bord
-                    </a>
+                    {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+                        <a href="{% url 'dashboard_admin' %}">
+                            Tableau de bord
+                        </a>
+                    {% else %}
+                        <a href="{% url 'dashboard_agent' %}">
+                            Tableau de bord
+                        </a>
+                    {% endif %}
                 </li>
-            
+        
+        
+                <!-- Enregistrer une visite -->
                 <li>
                     <a href="{% url 'enregistrer_visite' %}">
                         Enregistrer une visite
                     </a>
                 </li>
-            
+        
+        
+                <!-- Visiteurs -->
                 <li>
                     <a href="{% url 'liste_visiteurs' %}"  class="active">
                         Visiteurs
                     </a>
                 </li>
-            
+        
+        
+                <!-- Visites en cours -->
                 <li>
                     <a href="{% url 'visites_en_cours' %}">
                         Visites en cours
                     </a>
                 </li>
-            
+        
+        
+                <!-- Historique -->
                 <li>
                     <a href="{% url 'historique_visites' %}">
                         Historique
                     </a>
                 </li>
-            
+        
+        
+                <!-- Fonctions administrateur -->
+                {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+        
+                    <!-- Services -->
+                    <li>
+                        <a href="{% url 'gestion_services' %}">
+                            Services
+                        </a>
+                    </li>
+        
+        
+                    <!-- Utilisateurs -->
+                    <li>
+                        <a href="{% url 'gestion_utilisateurs' %}">
+                            Utilisateurs
+                        </a>
+                    </li>
+        
+        
+                    <!-- Administration Django -->
+                    <li>
+                        <a href="/admin/">
+                            Administration
+                        </a>
+                    </li>
+        
+                {% endif %}
+        
+        
+                <!-- Déconnexion -->
                 <li>
                     <a href="{% url 'deconnexion' %}">
                         Déconnexion
                     </a>
                 </li>
-
+        
             </ul>
-
+        
         </aside>
 
 
@@ -83,6 +135,20 @@
             <section class="visits-section">
 
                 <h2>Liste des visiteurs</h2>
+                <form method="get" class="search-form">
+
+                    <input
+                        type="text"
+                        name="recherche"
+                        placeholder="Rechercher un visiteur..."
+                        value="{{ recherche }}"
+                    >
+                
+                    <button type="submit">
+                        Rechercher
+                    </button>
+                
+                </form>
 
                 {% if visiteurs %}
 
@@ -97,6 +163,8 @@
                                     <th>Téléphone</th>
                                     <th>Type de pièce</th>
                                     <th>Numéro de pièce</th>
+                                    <th>Action</th>
+                                    
                                 </tr>
                             </thead>
 
@@ -125,8 +193,24 @@
                                         <td>
                                             {{ visiteur.numero_piece }}
                                         </td>
+                                        <td>
+
+                                            <a href="{% url 'detail_visiteur' visiteur.id %}">
+                                                <button type="button">
+                                                    Voir
+                                                </button>
+                                            </a>
+                                        
+                                            <a href="{% url 'modifier_visiteur' visiteur.id %}">
+                                                <button type="button">
+                                                    Modifier
+                                                </button>
+                                            </a>
+                                        
+                                        </td>
 
                                     </tr>
+                                    
 
                                 {% endfor %}
 

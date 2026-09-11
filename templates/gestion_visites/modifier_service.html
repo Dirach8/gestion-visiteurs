@@ -1,0 +1,220 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Modifier un service</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/dashboard_agent.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+
+                <h2>Gestion visiteurs</h2>
+
+                <span>Administration</span>
+
+            </div>
+
+            <nav class="sidebar-menu">
+
+                <a href="{% url 'dashboard_admin' %}">
+                    🏠
+                    <span>Tableau de bord</span>
+                </a>
+
+                <a href="{% url 'gestion_services' %}" class="active">
+                    🏢
+                    <span>Services</span>
+                </a>
+
+                <a href="/admin/auth/user/">
+                    👤
+                    <span>Utilisateurs</span>
+                </a>
+
+                <a href="{% url 'liste_visiteurs' %}">
+                    👥
+                    <span>Visiteurs</span>
+                </a>
+
+                <a href="{% url 'visites_en_cours' %}">
+                    🟢
+                    <span>Visites en cours</span>
+                </a>
+
+                <a href="{% url 'historique_visites' %}">
+                    📋
+                    <span>Historique</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+
+                <a href="{% url 'deconnexion' %}">
+                    🚪
+                    <span>Déconnexion</span>
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="topbar">
+
+                <div>
+
+                    <h1>Modifier un service</h1>
+
+                    <p>
+                        Modifier les informations du service
+                    </p>
+
+                </div>
+
+                <div class="user-info">
+
+                    <strong>
+                        {{ request.user.username }}
+                    </strong>
+
+                    <span>
+                        Administrateur
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <section class="content">
+
+                <section class="visits-section">
+
+                    <div class="section-header">
+
+                        <div>
+
+                            <h2>Informations du service</h2>
+
+                            <p>
+                                Modifiez les informations puis
+                                enregistrez les changements.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+
+                        <div class="form-group">
+
+                            <label for="nom">
+                                Nom du service
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nom"
+                                name="nom"
+                                value="{{ service.nom }}"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="description">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="5"
+                            >{{ service.description }}</textarea>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+
+                                <input
+                                    type="checkbox"
+                                    name="statut"
+                                    {% if service.statut %}checked{% endif %}
+                                >
+
+                                Service actif
+
+                            </label>
+
+                        </div>
+
+
+                        <div
+                            style="
+                                display: flex;
+                                gap: 12px;
+                                margin-top: 20px;
+                            "
+                        >
+
+                            <button type="submit">
+                                Enregistrer les modifications
+                            </button>
+
+                            <a
+                                href="{% url 'gestion_services' %}"
+                                class="view-all"
+                            >
+                                Annuler
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
