@@ -1,168 +1,302 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Détail du visiteur</title>
+<title>Détail du visiteur</title>
 
-    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+
+
 </head>
 
 <body>
 
 <div class="dashboard">
 
-    <!-- SIDEBAR -->
 
-    <aside class="sidebar">
+<!-- SIDEBAR -->
 
-        <div class="sidebar-header">
-            <h2>Gestion Visiteurs</h2>
-    
+<aside class="sidebar">
+
+    <div class="sidebar-header">
+        <h2>Gestion Visiteurs</h2>
+
+        {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+            <p>Administration</p>
+        {% else %}
+            <p>Agent d'accueil</p>
+        {% endif %}
+    </div>
+
+    <ul class="sidebar-menu">
+
+        <!-- Tableau de bord -->
+        <li>
             {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-                <p>Administration</p>
+                <a href="{% url 'dashboard_admin' %}">
+                    Tableau de bord
+                </a>
             {% else %}
-                <p>Agent d'accueil</p>
+                <a href="{% url 'dashboard_agent' %}">
+                    Tableau de bord
+                </a>
             {% endif %}
-        </div>
-    
-        <ul class="sidebar-menu">
-    
-            <!-- Tableau de bord -->
+        </li>
+
+        <!-- Enregistrer une visite -->
+        <li>
+            <a href="{% url 'enregistrer_visite' %}">
+                Enregistrer une visite
+            </a>
+        </li>
+
+        <!-- Visiteurs -->
+        <li>
+            <a href="{% url 'liste_visiteurs' %}" class="active">
+                Visiteurs
+            </a>
+        </li>
+
+        <!-- Visites en cours -->
+        <li>
+            <a href="{% url 'visites_en_cours' %}">
+                Visites en cours
+            </a>
+        </li>
+
+        <!-- Historique -->
+        <li>
+            <a href="{% url 'historique_visites' %}">
+                Historique
+            </a>
+        </li>
+
+        {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+
+            <!-- Services -->
             <li>
-                {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-                    <a href="{% url 'dashboard_admin' %}">
-                        Tableau de bord
-                    </a>
-                {% else %}
-                    <a href="{% url 'dashboard_agent' %}">
-                        Tableau de bord
-                    </a>
-                {% endif %}
-            </li>
-    
-            <!-- Enregistrer une visite -->
-            <li>
-                <a href="{% url 'enregistrer_visite' %}">
-                    Enregistrer une visite
+                <a href="{% url 'gestion_services' %}">
+                    Services
                 </a>
             </li>
-    
-            <!-- Visiteurs -->
+
+            <!-- Utilisateurs -->
             <li>
-                <a href="{% url 'liste_visiteurs' %}" class="active">
-                    Visiteurs
+                <a href="{% url 'gestion_utilisateurs' %}">
+                    Utilisateurs
                 </a>
             </li>
-    
-            <!-- Visites en cours -->
+
+            <!-- Administration -->
             <li>
-                <a href="{% url 'visites_en_cours' %}">
-                    Visites en cours
+                <a href="/admin/">
+                    Administration
                 </a>
             </li>
-    
-            <!-- Historique -->
-            <li>
-                <a href="{% url 'historique_visites' %}">
-                    Historique
-                </a>
-            </li>
-    
-            {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-    
-                <!-- Services -->
-                <li>
-                    <a href="{% url 'gestion_services' %}">
-                        Services
-                    </a>
-                </li>
-    
-                <!-- Utilisateurs -->
-                <li>
-                    <a href="{% url 'gestion_utilisateurs' %}">
-                        Utilisateurs
-                    </a>
-                </li>
-    
-                <!-- Administration -->
-                <li>
-                    <a href="/admin/">
-                        Administration
-                    </a>
-                </li>
-    
-            {% endif %}
-    
-            <!-- Déconnexion -->
-            <li>
-                <a href="{% url 'deconnexion' %}">
-                    Déconnexion
-                </a>
-            </li>
-    
-        </ul>
-    
-    </aside>
+
+        {% endif %}
+
+        <!-- Déconnexion -->
+        <li>
+            <a href="{% url 'deconnexion' %}">
+                Déconnexion
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
 
 
-    <!-- CONTENU PRINCIPAL -->
+<!-- CONTENU PRINCIPAL -->
 
-    <main class="main-content">
+<main class="main-content">
 
-        <div class="topbar">
+    <div class="topbar">
 
-            <div>
-                <h1>Détail du visiteur</h1>
-            </div>
-
-            <div class="user-info">
-                {{ request.user.username }}
-            </div>
-
+        <div>
+            <h1>Détail du visiteur</h1>
         </div>
 
+        <div class="user-info">
+            {{ request.user.username }}
+        </div>
 
-        <!-- INFORMATIONS DU VISITEUR -->
+    </div>
 
-        <section class="visits-section">
 
-            <h2>Informations personnelles</h2>
+    <!-- INFORMATIONS DU VISITEUR -->
+
+    <section class="visits-section">
+
+        <h2>Informations personnelles</h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <tbody>
+
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ visiteur.nom }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Prénom</th>
+                        <td>{{ visiteur.prenom }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Téléphone</th>
+                        <td>{{ visiteur.telephone }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Type de pièce</th>
+                        <td>{{ visiteur.type_piece }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Numéro de pièce</th>
+                        <td>{{ visiteur.numero_piece }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Structure de délivrance</th>
+                        <td>
+                            {% if visiteur.structure_delivrance %}
+                                {{ visiteur.structure_delivrance }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Date de délivrance</th>
+                        <td>
+                            {% if visiteur.date_delivrance %}
+                                {{ visiteur.date_delivrance|date:"d/m/Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Date d'expiration</th>
+                        <td>
+                            {% if visiteur.date_expiration %}
+                                {{ visiteur.date_expiration|date:"d/m/Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Document de la pièce</th>
+                        <td>
+                            {% if visiteur.document_cnib %}
+                                <a
+                                    href="{{ visiteur.document_cnib.url }}"
+                                    target="_blank"
+                                >
+                                    📄 Consulter le document PDF
+                                </a>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- HISTORIQUE DU VISITEUR -->
+
+    <section class="visits-section">
+
+        <h2>Historique des visites</h2>
+
+        {% if visites %}
 
             <div class="table-container">
 
                 <table>
 
+                    <thead>
+
+                        <tr>
+                            <th>Service</th>
+                            <th>Motif</th>
+                            <th>Entrée</th>
+                            <th>Sortie</th>
+                            <th>Statut</th>
+                        </tr>
+
+                    </thead>
+
                     <tbody>
 
-                        <tr>
-                            <th>Nom</th>
-                            <td>{{ visiteur.nom }}</td>
-                        </tr>
+                        {% for visite in visites %}
 
-                        <tr>
-                            <th>Prénom</th>
-                            <td>{{ visiteur.prenom }}</td>
-                        </tr>
+                            <tr>
 
-                        <tr>
-                            <th>Téléphone</th>
-                            <td>{{ visiteur.telephone }}</td>
-                        </tr>
+                                <td>
+                                    {{ visite.service.nom }}
+                                </td>
 
-                        <tr>
-                            <th>Type de pièce</th>
-                            <td>{{ visiteur.type_piece }}</td>
-                        </tr>
+                                <td>
+                                    {{ visite.motif }}
+                                </td>
 
-                        <tr>
-                            <th>Numéro de pièce</th>
-                            <td>{{ visiteur.numero_piece }}</td>
-                        </tr>
+                                <td>
+                                    {{ visite.date_heure_entree|date:"d/m/Y H:i" }}
+                                </td>
+
+                                <td>
+                                    {% if visite.date_heure_sortie %}
+                                        {{ visite.date_heure_sortie|date:"d/m/Y H:i" }}
+                                    {% else %}
+                                        —
+                                    {% endif %}
+                                </td>
+
+                                <td>
+
+                                    {% if visite.statut == "PRESENT" %}
+
+                                        <span class="status present">
+                                            Présent
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="status sorti">
+                                            Sorti
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
 
                     </tbody>
 
@@ -170,117 +304,37 @@
 
             </div>
 
-        </section>
+        {% else %}
+
+            <p>
+                Aucune visite enregistrée pour ce visiteur.
+            </p>
+
+        {% endif %}
+
+    </section>
 
 
-        <!-- HISTORIQUE DU VISITEUR -->
+    <!-- ACTIONS -->
 
-        <section class="visits-section">
+    <section class="visits-section">
 
-            <h2>Historique des visites</h2>
+        <a href="{% url 'modifier_visiteur' visiteur.id %}">
+            <button type="button">
+                Modifier le visiteur
+            </button>
+        </a>
 
-            {% if visites %}
+        <a href="{% url 'liste_visiteurs' %}">
+            <button type="button">
+                Retour aux visiteurs
+            </button>
+        </a>
 
-                <div class="table-container">
+    </section>
 
-                    <table>
+</main>
 
-                        <thead>
-
-                            <tr>
-                                <th>Service</th>
-                                <th>Motif</th>
-                                <th>Entrée</th>
-                                <th>Sortie</th>
-                                <th>Statut</th>
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {% for visite in visites %}
-
-                                <tr>
-
-                                    <td>
-                                        {{ visite.service.nom }}
-                                    </td>
-
-                                    <td>
-                                        {{ visite.motif }}
-                                    </td>
-
-                                    <td>
-                                        {{ visite.date_heure_entree|date:"d/m/Y H:i" }}
-                                    </td>
-
-                                    <td>
-                                        {% if visite.date_heure_sortie %}
-                                            {{ visite.date_heure_sortie|date:"d/m/Y H:i" }}
-                                        {% else %}
-                                            —
-                                        {% endif %}
-                                    </td>
-
-                                    <td>
-
-                                        {% if visite.statut == "PRESENT" %}
-
-                                            <span class="status present">
-                                                Présent
-                                            </span>
-
-                                        {% else %}
-
-                                            <span class="status sorti">
-                                                Sorti
-                                            </span>
-
-                                        {% endif %}
-
-                                    </td>
-
-                                </tr>
-
-                            {% endfor %}
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            {% else %}
-
-                <p>
-                    Aucune visite enregistrée pour ce visiteur.
-                </p>
-
-            {% endif %}
-
-        </section>
-
-
-        <!-- ACTIONS -->
-
-        <section class="visits-section">
-
-            <a href="{% url 'modifier_visiteur' visiteur.id %}">
-                <button type="button">
-                    Modifier le visiteur
-                </button>
-            </a>
-
-            <a href="{% url 'liste_visiteurs' %}">
-                <button type="button">
-                    Retour aux visiteurs
-                </button>
-            </a>
-
-        </section>
-
-    </main>
 
 </div>
 

@@ -9,6 +9,27 @@ class Visiteur(models.Model):
     type_piece = models.CharField(max_length=50)
     numero_piece = models.CharField(max_length=50)
 
+    structure_delivrance = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    date_delivrance = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    date_expiration = models.DateField(
+        null=True,
+        blank=True
+    )
+
+    document_cnib = models.FileField(
+        upload_to='documents_cnib/',
+        blank=True,
+        null=True
+    )
+
     def __str__(self):
         return f"{self.nom} {self.prenom}"
     

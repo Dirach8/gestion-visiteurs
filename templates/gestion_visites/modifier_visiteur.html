@@ -1,263 +1,354 @@
 {% load static %}
 
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Modifier un visiteur</title>
+<title>Modifier un visiteur</title>
 
-    <link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+<link rel="stylesheet" href="{% static 'css/dashboard_agent.css' %}">
+
+
 </head>
 
 <body>
 
 <div class="dashboard">
 
-    <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="sidebar-header">
-            <h2>Gestion Visiteurs</h2>
-    
+    <div class="sidebar-header">
+        <h2>Gestion Visiteurs</h2>
+
+        {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+            <p>Administration</p>
+        {% else %}
+            <p>Agent d'accueil</p>
+        {% endif %}
+    </div>
+
+    <ul class="sidebar-menu">
+
+        <!-- Tableau de bord -->
+        <li>
             {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-                <p>Administration</p>
+                <a href="{% url 'dashboard_admin' %}">
+                    Tableau de bord
+                </a>
             {% else %}
-                <p>Agent d'accueil</p>
+                <a href="{% url 'dashboard_agent' %}">
+                    Tableau de bord
+                </a>
             {% endif %}
-        </div>
-    
-        <ul class="sidebar-menu">
-    
-            <!-- Tableau de bord -->
+        </li>
+
+        <!-- Enregistrer une visite -->
+        <li>
+            <a href="{% url 'enregistrer_visite' %}">
+                Enregistrer une visite
+            </a>
+        </li>
+
+        <!-- Visiteurs -->
+        <li>
+            <a href="{% url 'liste_visiteurs' %}" class="active">
+                Visiteurs
+            </a>
+        </li>
+
+        <!-- Visites en cours -->
+        <li>
+            <a href="{% url 'visites_en_cours' %}">
+                Visites en cours
+            </a>
+        </li>
+
+        <!-- Historique -->
+        <li>
+            <a href="{% url 'historique_visites' %}">
+                Historique
+            </a>
+        </li>
+
+        {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
+
+            <!-- Services -->
             <li>
-                {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-                    <a href="{% url 'dashboard_admin' %}">
-                        Tableau de bord
-                    </a>
-                {% else %}
-                    <a href="{% url 'dashboard_agent' %}">
-                        Tableau de bord
-                    </a>
+                <a href="{% url 'gestion_services' %}">
+                    Services
+                </a>
+            </li>
+
+            <!-- Utilisateurs -->
+            <li>
+                <a href="{% url 'gestion_utilisateurs' %}">
+                    Utilisateurs
+                </a>
+            </li>
+
+            <!-- Administration -->
+            <li>
+                <a href="/admin/">
+                    Administration
+                </a>
+            </li>
+
+        {% endif %}
+
+        <!-- Déconnexion -->
+        <li>
+            <a href="{% url 'deconnexion' %}">
+                Déconnexion
+            </a>
+        </li>
+
+    </ul>
+
+</aside>
+
+
+<!-- CONTENU PRINCIPAL -->
+
+<main class="main-content">
+
+    <div class="topbar">
+
+        <div>
+            <h1>Modifier un visiteur</h1>
+        </div>
+
+        <div class="user-info">
+            {{ request.user.username }}
+        </div>
+
+    </div>
+
+
+    <section class="visits-section">
+
+        <h2>Informations du visiteur</h2>
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <div class="form-group">
+
+                <label for="nom">
+                    Nom
+                </label>
+
+                <input
+                    type="text"
+                    id="nom"
+                    name="nom"
+                    value="{{ visiteur.nom }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="prenom">
+                    Prénom
+                </label>
+
+                <input
+                    type="text"
+                    id="prenom"
+                    name="prenom"
+                    value="{{ visiteur.prenom }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="telephone">
+                    Téléphone
+                </label>
+
+                <input
+                    type="text"
+                    id="telephone"
+                    name="telephone"
+                    value="{{ visiteur.telephone }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="type_piece">
+                    Type de pièce
+                </label>
+
+                <select
+                    id="type_piece"
+                    name="type_piece"
+                    required
+                >
+
+                    <option
+                        value="CNI"
+                        {% if visiteur.type_piece == "CNI" %}selected{% endif %}
+                    >
+                        CNI
+                    </option>
+
+                    <option
+                        value="Passeport"
+                        {% if visiteur.type_piece == "Passeport" %}selected{% endif %}
+                    >
+                        Passeport
+                    </option>
+
+                    <option
+                        value="Carte consulaire"
+                        {% if visiteur.type_piece == "Carte consulaire" %}selected{% endif %}
+                    >
+                        Carte consulaire
+                    </option>
+
+                    <option
+                        value="Permis de conduire"
+                        {% if visiteur.type_piece == "Permis de conduire" %}selected{% endif %}
+                    >
+                        Permis de conduire
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="numero_piece">
+                    Numéro de pièce
+                </label>
+
+                <input
+                    type="text"
+                    id="numero_piece"
+                    name="numero_piece"
+                    value="{{ visiteur.numero_piece }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- NOUVELLES INFORMATIONS DE LA PIÈCE -->
+
+            <div class="form-group">
+
+                <label for="structure_delivrance">
+                    Structure de délivrance
+                </label>
+
+                <input
+                    type="text"
+                    id="structure_delivrance"
+                    name="structure_delivrance"
+                    value="{{ visiteur.structure_delivrance }}"
+                    placeholder="Ex. ONI"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="date_delivrance">
+                    Date de délivrance
+                </label>
+
+                <input
+                    type="date"
+                    id="date_delivrance"
+                    name="date_delivrance"
+                    value="{{ visiteur.date_delivrance|date:'Y-m-d' }}"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="date_expiration">
+                    Date d'expiration
+                </label>
+
+                <input
+                    type="date"
+                    id="date_expiration"
+                    name="date_expiration"
+                    value="{{ visiteur.date_expiration|date:'Y-m-d' }}"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="document_cnib">
+                    Document de la pièce (PDF)
+                </label>
+
+                {% if visiteur.document_cnib %}
+
+                    <p>
+                        📄
+                        <a
+                            href="{{ visiteur.document_cnib.url }}"
+                            target="_blank"
+                        >
+                            Consulter le document actuel
+                        </a>
+                    </p>
+
                 {% endif %}
-            </li>
-    
-            <!-- Enregistrer une visite -->
-            <li>
-                <a href="{% url 'enregistrer_visite' %}">
-                    Enregistrer une visite
-                </a>
-            </li>
-    
-            <!-- Visiteurs -->
-            <li>
-                <a href="{% url 'liste_visiteurs' %}" class="active">
-                    Visiteurs
-                </a>
-            </li>
-    
-            <!-- Visites en cours -->
-            <li>
-                <a href="{% url 'visites_en_cours' %}">
-                    Visites en cours
-                </a>
-            </li>
-    
-            <!-- Historique -->
-            <li>
-                <a href="{% url 'historique_visites' %}">
-                    Historique
-                </a>
-            </li>
-    
-            {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-    
-                <!-- Services -->
-                <li>
-                    <a href="{% url 'gestion_services' %}">
-                        Services
-                    </a>
-                </li>
-    
-                <!-- Utilisateurs -->
-                <li>
-                    <a href="{% url 'gestion_utilisateurs' %}">
-                        Utilisateurs
-                    </a>
-                </li>
-    
-                <!-- Administration -->
-                <li>
-                    <a href="/admin/">
-                        Administration
-                    </a>
-                </li>
-    
-            {% endif %}
-    
-            <!-- Déconnexion -->
-            <li>
-                <a href="{% url 'deconnexion' %}">
-                    Déconnexion
-                </a>
-            </li>
-    
-        </ul>
-    
-    </aside>
 
+                <input
+                    type="file"
+                    id="document_cnib"
+                    name="document_cnib"
+                    accept=".pdf,application/pdf"
+                >
 
-    <!-- CONTENU PRINCIPAL -->
+                <small>
+                    Laisser vide pour conserver le document actuel.
+                </small>
 
-    <main class="main-content">
-
-        <div class="topbar">
-
-            <div>
-                <h1>Modifier un visiteur</h1>
             </div>
 
-            <div class="user-info">
-                {{ request.user.username }}
-            </div>
 
-        </div>
+            <button type="submit">
+                Enregistrer les modifications
+            </button>
 
+        </form>
 
-        <section class="visits-section">
+    </section>
 
-            <h2>Informations du visiteur</h2>
-
-            <form method="post">
-
-                {% csrf_token %}
-
-
-                <div class="form-group">
-
-                    <label for="nom">
-                        Nom
-                    </label>
-
-                    <input
-                        type="text"
-                        id="nom"
-                        name="nom"
-                        value="{{ visiteur.nom }}"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="prenom">
-                        Prénom
-                    </label>
-
-                    <input
-                        type="text"
-                        id="prenom"
-                        name="prenom"
-                        value="{{ visiteur.prenom }}"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="telephone">
-                        Téléphone
-                    </label>
-
-                    <input
-                        type="text"
-                        id="telephone"
-                        name="telephone"
-                        value="{{ visiteur.telephone }}"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="type_piece">
-                        Type de pièce
-                    </label>
-
-                    <select
-                        id="type_piece"
-                        name="type_piece"
-                        required
-                    >
-
-                        <option
-                            value="CNI"
-                            {% if visiteur.type_piece == "CNI" %}selected{% endif %}
-                        >
-                            CNI
-                        </option>
-
-                        <option
-                            value="Passeport"
-                            {% if visiteur.type_piece == "Passeport" %}selected{% endif %}
-                        >
-                            Passeport
-                        </option>
-
-                        <option
-                            value="Carte consulaire"
-                            {% if visiteur.type_piece == "Carte consulaire" %}selected{% endif %}
-                        >
-                            Carte consulaire
-                        </option>
-
-                        <option
-                            value="Permis de conduire"
-                            {% if visiteur.type_piece == "Permis de conduire" %}selected{% endif %}
-                        >
-                            Permis de conduire
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="numero_piece">
-                        Numéro de pièce
-                    </label>
-
-                    <input
-                        type="text"
-                        id="numero_piece"
-                        name="numero_piece"
-                        value="{{ visiteur.numero_piece }}"
-                        required
-                    >
-
-                </div>
-
-
-                <button type="submit">
-                    Enregistrer les modifications
-                </button>
-
-            </form>
-
-        </section>
-
-    </main>
+</main>
 
 </div>
 

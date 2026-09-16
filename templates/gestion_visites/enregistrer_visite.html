@@ -20,17 +20,16 @@
 
             <div class="sidebar-header">
                 <h2>Gestion Visiteurs</h2>
-        
+
                 {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
                     <p>Administration</p>
                 {% else %}
                     <p>Agent d'accueil</p>
                 {% endif %}
             </div>
-        
-        
+
             <ul class="sidebar-menu">
-        
+
                 <!-- Tableau de bord -->
                 <li>
                     {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
@@ -43,78 +42,67 @@
                         </a>
                     {% endif %}
                 </li>
-        
-        
+
                 <!-- Enregistrer une visite -->
                 <li>
                     <a href="{% url 'enregistrer_visite' %}" class="active">
                         Enregistrer une visite
                     </a>
                 </li>
-        
-        
+
                 <!-- Visiteurs -->
                 <li>
                     <a href="{% url 'liste_visiteurs' %}">
                         Visiteurs
                     </a>
                 </li>
-        
-        
+
                 <!-- Visites en cours -->
                 <li>
                     <a href="{% url 'visites_en_cours' %}">
                         Visites en cours
                     </a>
                 </li>
-        
-        
+
                 <!-- Historique -->
                 <li>
                     <a href="{% url 'historique_visites' %}">
                         Historique
                     </a>
                 </li>
-        
-        
+
                 <!-- Fonctions administrateur -->
                 {% if request.user.is_superuser or request.user.groups.all.0.name == "ADMINISTRATEUR" %}
-        
-                    <!-- Services -->
+
                     <li>
                         <a href="{% url 'gestion_services' %}">
                             Services
                         </a>
                     </li>
-        
-        
-                    <!-- Utilisateurs -->
+
                     <li>
                         <a href="{% url 'gestion_utilisateurs' %}">
                             Utilisateurs
                         </a>
                     </li>
-        
-        
-                    <!-- Administration Django -->
+
                     <li>
                         <a href="/admin/">
                             Administration
                         </a>
                     </li>
-        
+
                 {% endif %}
-        
-        
+
                 <!-- Déconnexion -->
                 <li>
                     <a href="{% url 'deconnexion' %}">
                         Déconnexion
                     </a>
                 </li>
-        
+
             </ul>
-        
+
         </aside>
 
 
@@ -137,7 +125,10 @@
 
                 <h2>Informations du visiteur</h2>
 
-                <form method="post">
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                >
 
                     {% csrf_token %}
 
@@ -204,6 +195,62 @@
                         >
                     </div>
 
+                    <!-- NOUVELLES INFORMATIONS DE LA PIÈCE -->
+
+                    <div class="form-group">
+                        <label for="structure_delivrance">
+                            Structure de délivrance
+                        </label>
+
+                        <input
+                            type="text"
+                            id="structure_delivrance"
+                            name="structure_delivrance"
+                            placeholder="Ex. ONI"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_delivrance">
+                            Date de délivrance
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date_delivrance"
+                            name="date_delivrance"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date_expiration">
+                            Date d'expiration
+                        </label>
+
+                        <input
+                            type="date"
+                            id="date_expiration"
+                            name="date_expiration"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="document_cnib">
+                            Document de la pièce (PDF)
+                        </label>
+
+                        <input
+                            type="file"
+                            id="document_cnib"
+                            name="document_cnib"
+                            accept=".pdf,application/pdf"
+                        >
+
+                        <small>
+                            Format accepté : PDF
+                        </small>
+                    </div>
+
 
                     <hr>
 
@@ -216,25 +263,27 @@
                         </label>
 
                         <select
-    id="service"
-    name="service"
-    required
->
-    <option value="">
-        Sélectionner un service
-    </option>
+                            id="service"
+                            name="service"
+                            required
+                        >
+                            <option value="">
+                                Sélectionner un service
+                            </option>
 
-    {% for service in services %}
-        <option value="{{ service.id }}">
-            {{ service.nom }}
-        </option>
-    {% endfor %}
+                            {% for service in services %}
+                                <option value="{{ service.id }}">
+                                    {{ service.nom }}
+                                </option>
+                            {% endfor %}
 
-</select>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="motif">Motif de la visite</label>
+                        <label for="motif">
+                            Motif de la visite
+                        </label>
 
                         <textarea
                             id="motif"

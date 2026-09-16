@@ -178,6 +178,7 @@ def visites_en_cours(request):
             'visites': visites
         }
     )
+    
 @login_required
 def enregistrer_sortie(request, visite_id):
 
@@ -190,7 +191,93 @@ def enregistrer_sortie(request, visite_id):
     visite.statut = Visite.StatutVisite.SORTI
     visite.save()
 
-    return redirect('visites_en_cours')   
+    return redirect('visites_en_cours')    
+    
+@login_required
+def enregistrer_visite(request):
+
+    services = Service.objects.filter(statut=True)
+
+    if request.method == 'POST':
+
+        nom = request.POST.get('nom')
+        prenom = request.POST.get('prenom')
+        telephone = request.POST.get('telephone')
+        type_piece = request.POST.get('type_piece')
+        numero_piece = request.POST.get('numero_piece')
+
+        structure_delivrance = request.POST.get(
+            'structure_delivrance'
+        )
+
+        date_delivrance = request.POST.get(
+            'date_delivrance'
+        )
+
+        date_expiration = request.POST.get(
+            'date_expiration'
+        )
+
+        document_cnib = request.FILES.get(
+            'document_cnib'
+        )
+
+        service_id = request.POST.get('service')
+        motif = request.POST.get('motif')
+        observation = request.POST.get('observation')
+
+        visiteur, created = Visiteur.objects.get_or_create(
+            numero_piece=numero_piece,
+            defaults={
+                'nom': nom,
+                'prenom': prenom,
+                'telephone': telephone,
+                'type_piece': type_piece,
+                'structure_delivrance': structure_delivrance,
+                'date_delivrance': date_delivrance or None,
+                'date_expiration': date_expiration or None,
+                'document_cnib': document_cnib,
+            }
+        )
+
+        if not created:
+            visiteur.nom = nom
+            visiteur.prenom = prenom
+            visiteur.telephone = telephone
+            visiteur.type_piece = type_piece
+            visiteur.structure_delivrance = structure_delivrance
+            visiteur.date_delivrance = date_delivrance or None
+            visiteur.date_expiration = date_expiration or None
+
+            if document_cnib:
+                visiteur.document_cnib = document_cnib
+
+            visiteur.save()
+
+        service = Service.objects.get(id=service_id)
+
+        Visite.objects.create(
+            visiteur=visiteur,
+            service=service,
+            enregistre_par=request.user,
+            motif=motif,
+            observation=observation,
+            date_heure_entree=timezone.now(),
+            statut=Visite.StatutVisite.PRESENT
+        )
+
+        if request.user.is_superuser or request.user.groups.filter(
+            name='ADMINISTRATEUR'
+        ).exists():
+            return redirect('dashboard_admin')
+
+        return redirect('dashboard_agent')
+
+    return render(
+        request,
+        'gestion_visites/enregistrer_visite.html',
+        {'services': services}
+    )   
 
 @login_required
 def historique_visites(request):
@@ -279,6 +366,33 @@ def modifier_visiteur(request, visiteur_id):
         visiteur.telephone = request.POST.get('telephone')
         visiteur.type_piece = request.POST.get('type_piece')
         visiteur.numero_piece = request.POST.get('numero_piece')
+
+        visiteur.structure_delivrance = request.POST.get(
+            'structure_delivrance'
+        )
+
+        date_delivrance = request.POST.get(
+            'date_delivrance'
+        )
+
+        date_expiration = request.POST.get(
+            'date_expiration'
+        )
+
+        visiteur.date_delivrance = (
+            date_delivrance or None
+        )
+
+        visiteur.date_expiration = (
+            date_expiration or None
+        )
+
+        document_cnib = request.FILES.get(
+            'document_cnib'
+        )
+
+        if document_cnib:
+            visiteur.document_cnib = document_cnib
 
         visiteur.save()
 
